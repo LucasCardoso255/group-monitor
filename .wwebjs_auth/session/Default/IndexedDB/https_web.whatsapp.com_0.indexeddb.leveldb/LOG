@@ -1,0 +1,13 @@
+2026/03/29-17:00:30.998 3a84 Reusing MANIFEST D:\.bundas\group-monitor\.wwebjs_auth\session\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
+2026/03/29-17:00:30.999 3a84 Recovering log #1432
+2026/03/29-17:00:31.002 3a84 Reusing old log D:\.bundas\group-monitor\.wwebjs_auth\session\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/001432.log 
+2026/03/29-17:00:33.362 3a84 Compacting 1@1 + 7@2 files
+2026/03/29-17:00:33.644 3a84 Generated table #1440@1: 10813 keys, 2164730 bytes
+2026/03/29-17:00:33.988 3a84 Generated table #1441@1: 35462 keys, 2260962 bytes
+2026/03/29-17:00:34.221 3a84 Generated table #1442@1: 27333 keys, 2279989 bytes
+2026/03/29-17:00:34.438 3a84 Generated table #1443@1: 28062 keys, 2276107 bytes
+2026/03/29-17:00:34.659 3a84 Generated table #1444@1: 26107 keys, 2264182 bytes
+2026/03/29-17:00:34.863 3a84 Generated table #1445@1: 28559 keys, 2210841 bytes
+2026/03/29-17:00:35.033 3a84 Generated table #1446@1: 30118 keys, 1626179 bytes
+2026/03/29-17:00:35.033 3a84 Compacted 1@1 + 7@2 files => 15082990 bytes
+2026/03/29-17:00:35.120 3a84 compacted to: files[ 0 1 45 0 0 0 0 ]

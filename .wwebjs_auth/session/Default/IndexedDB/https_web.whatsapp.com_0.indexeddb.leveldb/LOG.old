@@ -1,0 +1,21 @@
+2026/03/29-16:59:52.960 21ac Reusing MANIFEST D:\.bundas\group-monitor\.wwebjs_auth\session\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
+2026/03/29-16:59:52.961 21ac Recovering log #1402
+2026/03/29-16:59:53.001 21ac Reusing old log D:\.bundas\group-monitor\.wwebjs_auth\session\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/001402.log 
+2026/03/29-16:59:58.178 269c Level-0 table #1433: started
+2026/03/29-16:59:58.500 269c Level-0 table #1433: 1206704 bytes OK
+2026/03/29-16:59:58.610 269c Delete type=0 #1402
+2026/03/29-16:59:58.627 269c Compacting 1@0 + 0@1 files
+2026/03/29-16:59:58.778 269c Generated table #1434@0: 13759 keys, 112723 bytes
+2026/03/29-16:59:58.998 269c Generated table #1435@0: 11990 keys, 436166 bytes
+2026/03/29-16:59:59.095 269c Generated table #1436@0: 100 keys, 9814 bytes
+2026/03/29-16:59:59.095 269c Compacted 1@0 + 0@1 files => 558703 bytes
+2026/03/29-16:59:59.172 269c compacted to: files[ 0 3 45 0 0 0 0 ]
+2026/03/29-16:59:59.172 269c Delete type=2 #1433
+2026/03/29-16:59:59.623 3484 Compacting 1@1 + 2@2 files
+2026/03/29-16:59:59.987 3484 Generated table #1437@1: 79904 keys, 2274554 bytes
+2026/03/29-17:00:00.200 3484 Generated table #1438@1: 9448 keys, 534844 bytes
+2026/03/29-17:00:00.200 3484 Compacted 1@1 + 2@2 files => 2809398 bytes
+2026/03/29-17:00:00.302 3484 compacted to: files[ 0 2 45 0 0 0 0 ]
+2026/03/29-17:00:00.303 3484 Delete type=2 #1408
+2026/03/29-17:00:00.303 3484 Delete type=2 #1409
+2026/03/29-17:00:00.303 3484 Delete type=2 #1435
