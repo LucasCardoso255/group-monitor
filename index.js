@@ -65,7 +65,7 @@ function formatarData(timestamp) {
 
 async function enviarParaN8N(dados) {
     try {
-        const res = await fetch('https://veda-maternalistic-graciela.ngrok-free.dev/webhook-test/whatsapp-group-monitor', {
+        const res = await fetch('https://veda-maternalistic-graciela.ngrok-free.dev/webhook/whatsapp-group-monitor', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
