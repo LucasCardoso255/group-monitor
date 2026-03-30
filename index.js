@@ -9,7 +9,7 @@ const CONFIG = {
     MODE: 2, // 1 = histórico | 2 = realtime
 
     SUPORT_PHONES: [
-        '555181129332@c.us'
+        '555181129332@c.us',
     ],
 
     SLA_MINUTES: 5, // tempo de resposta padrão
@@ -19,8 +19,8 @@ const CONFIG = {
     LIMITE_MENSAGENS: 10
 };
 
-const SLA_MS = CONFIG.SLA_MINUTES * 1000;
-// const SLA_MS = CONFIG.SLA_MINUTES * 60 * 1000;
+const SLA_MS = CONFIG.SLA_MINUTES * 1000; // SEGUNDOS PARA TESTE
+// const SLA_MS = CONFIG.SLA_MINUTES * 60 * 1000; // MINUTOS
 
 
 // =============================
@@ -277,7 +277,6 @@ client.on('message', async msg => {
     console.log('Número:', numero);
     console.log('Mensagem:', texto);
 
-    // ATENDENTE
     if (isAtendente(numero)) {
         g.ultimaMensagemAtendente = agora;
         g.alertado = false;
@@ -296,7 +295,6 @@ client.on('message', async msg => {
         return;
     }
 
-    // CLIENTE
     g.ultimaMensagemCliente = agora;
     g.alertado = false;
 
@@ -309,7 +307,6 @@ client.on('message', async msg => {
     console.log('MENSAGEM RELEVANTE');
     console.log(mensagensRelevantes[grupo]);
 
-    // agenda SLA
     agendarSLA(grupo, nomeGrupo);
 });
 
