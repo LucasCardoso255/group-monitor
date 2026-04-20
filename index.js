@@ -1,3 +1,48 @@
+const fs = require('fs');
+const path = require('path');
+
+function carregarEnv(arquivo = '.env') {
+    const envPath = path.resolve(__dirname, arquivo);
+
+    if (!fs.existsSync(envPath)) {
+        return;
+    }
+
+    const conteudo = fs.readFileSync(envPath, 'utf8');
+
+    for (const linha of conteudo.split(/\r?\n/)) {
+        const texto = linha.trim();
+
+        if (!texto || texto.startsWith('#')) {
+            continue;
+        }
+
+        const separadorIndex = texto.indexOf('=');
+
+        if (separadorIndex === -1) {
+            continue;
+        }
+
+        const chave = texto.slice(0, separadorIndex).trim();
+        let valor = texto.slice(separadorIndex + 1).trim();
+
+        if (
+            (valor.startsWith('"') && valor.endsWith('"')) ||
+            (valor.startsWith("'") && valor.endsWith("'"))
+        ) {
+            valor = valor.slice(1, -1);
+        }
+
+        if (!(chave in process.env)) {
+            process.env[chave] = valor;
+        }
+    }
+}
+
+carregarEnv();
+
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+
 const { Client, LocalAuth } = require('whatsapp-web.js');
 const qrcode = require('qrcode-terminal');
 
@@ -7,6 +52,8 @@ const qrcode = require('qrcode-terminal');
 
 const CONFIG = {
     MODE: 2, // 1 = histórico | 2 = realtime
+
+    N8N_WEBHOOK_URL: process.env.N8N_WEBHOOK_URL,
 
     SUPORT_PHONES: [
         '555181129332@c.us',
@@ -63,9 +110,23 @@ function formatarData(timestamp) {
     });
 }
 
-async function enviarParaN8N(dados) {
+async function enviarWhatsApp(atendente, mensagem) {
     try {
-        const res = await fetch('https://veda-maternalistic-graciela.ngrok-free.dev/webhook/whatsapp-group-monitor', {
+        await client.sendMessage(atendente, mensagem);
+        console.log(`WhatsApp enviado para ${atendente}`);
+    } catch (err) {
+        console.error(`Erro ao enviar WhatsApp para ${atendente}:`, err.message);
+    }
+}
+
+async function enviarParaN8N(dados) {
+    if (!CONFIG.N8N_WEBHOOK_URL) {
+        console.error('N8N_WEBHOOK_URL não configurada no ambiente.');
+        return;
+    }
+
+    try {
+        const res = await fetch(CONFIG.N8N_WEBHOOK_URL, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -76,10 +137,24 @@ async function enviarParaN8N(dados) {
         const text = await res.text();
 
         console.log('Enviado para n8n:', res.status, text);
-    } catch (err) {
-        console.error('Erro ao enviar pro n8n:', err.message);
+
+         // Foreach em atendentes (obj em config)
+        for (const atendente of CONFIG.SUPORT_PHONES) {
+            const mensagem = `Tempo de espera excedido*
+
+    📌 Grupo: ${dados.grupo}
+    ⏱ Tempo sem resposta: ${dados.tempoSemResposta}s
+    🕒 Última mensagem: ${dados.ultimaMensagemCliente}
+
+    Corre lá responder 👀`;
+
+                await enviarWhatsApp(atendente, mensagem);
+            }
+
+        } catch (err) {
+            console.error('Erro ao enviar pro n8n:', err.message);
+        }
     }
-}
 
 // =============================
 // SLA TIMER (CORE)
@@ -111,11 +186,12 @@ function agendarSLA(grupo, nomeGrupo) {
             console.log('-------------------');
 
             enviarParaN8N({
-                grupoId: grupo,
-                grupo: nomeGrupo,
-                ultimaMensagemCliente: formatarData(g.ultimaMensagemCliente),
-                tempoSemResposta: Math.floor(tempo / 1000),
-                tipo: 'Mais de 30 minutos sem resposta'
+                group_id: grupo,
+                group_name: nomeGrupo,
+                ultima_mensagem_cliente: formatarData(g.ultimaMensagemCliente),
+                tempo_sem_resposta: Math.floor(tempo / 1000),
+                tipo: 'Mais de 30 minutos sem resposta',
+                msg_sent: mensagensRelevantes[grupo] && mensagensRelevantes[grupo].length > 0 ? mensagensRelevantes[grupo][mensagensRelevantes[grupo].length - 1].mensagem : ''
             });
 
             g.alertado = true;
@@ -131,6 +207,7 @@ const client = new Client({
     authStrategy: new LocalAuth(),
     puppeteer: {
         headless: true,
+        executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
         args: ['--no-sandbox', '--disable-setuid-sandbox']
     }
 });
@@ -186,6 +263,7 @@ async function processarHistorico() {
 
         let ultimaCliente = null;
         let ultimaAtendente = null;
+        let ultimaMensagem = null;
 
         for (const msg of mensagens.reverse()) {
             const timestamp = msg.timestamp * 1000;
@@ -205,6 +283,7 @@ async function processarHistorico() {
             if (isMensagemIgnorada(texto)) continue;
 
             ultimaCliente = timestamp;
+            ultimaMensagem = texto;
         }
 
         if (
@@ -218,10 +297,11 @@ async function processarHistorico() {
             console.log(`${Math.floor(tempo / 1000)}s`);
 
             await enviarParaN8N({
-                grupo: nomeGrupo,
-                ultimaMensagemCliente: ultimaCliente,
-                tempoSemResposta: Math.floor(tempo / 1000),
-                tipo: 'HISTORICO_SEM_RESPOSTA'
+                group_name: nomeGrupo,
+                ultima_mensagem_cliente: ultimaCliente,
+                tempo_sem_resposta: Math.floor(tempo / 1000),
+                tipo: 'HISTORICO_SEM_RESPOSTA',
+                msg_sent: ultimaMensagem
             });
 
         } else {
